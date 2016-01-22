@@ -58,7 +58,15 @@ public class UserDAOImpl implements UserDAO {
     }
     
     public void delete(User object) {
-        // TODO Auto-generated method stub
+        try (Connection conn = connection.getConnection()) {
+            logger.debug("delete user");
+            ps = conn.prepareStatement("delete * from user_card where username=?");
+            ps.setString(1, object.getUsername());
+            ps.execute();
+            ps.close();
+        } catch (SQLException e) {
+            logger.error("delete user error", e);
+        }
         
     }
     
