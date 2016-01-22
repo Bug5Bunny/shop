@@ -2,7 +2,9 @@ package org.chocolate.shop.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +17,7 @@ import org.chocolate.shop.log.Log;
 public class UserDAOImpl implements UserDAO {
     
     private PreparedStatement ps = null;
+    private ResultSet rs;
     private static Logger logger = Log.init("UserDAOImpl");
     private static ConnectionManager connection = null;
     private static UserDAOImpl userDAO = null;
@@ -33,51 +36,145 @@ public class UserDAOImpl implements UserDAO {
     public String create(User object) {
         String uuid = UUID.randomUUID().toString();
         try (Connection conn = connection.getConnection()) {
-                logger.debug("create user");
-                ps = conn.prepareStatement("insert into user_card(user_id,username,email,password) values(?,?,?,?);");
-                ps.setString(1, uuid);
-                ps.setString(2, object.getUsername());
-                ps.setString(3, object.getEmail());
-                ps.setString(4, object.getPassword());
-                ps.execute();
-                ps.close();
+            logger.debug("create user");
+            ps = conn.prepareStatement(
+                    "insert into user_card(user_id,username,email,password) values(?,?,?,?);");
+            ps.setString(1, uuid);
+            ps.setString(2, object.getUsername());
+            ps.setString(3, object.getEmail());
+            ps.setString(4, object.getPassword());
+            ps.execute();
         } catch (SQLException e) {
             logger.error("create user error", e);
+        } finally {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                logger.error("problem with closing PS", e);
+            }
         }
         return uuid;
     }
     
     public User readByID(String id) {
-        // TODO Auto-generated method stub
-        return null;
+        User user = null;
+        try (Connection conn = connection.getConnection()) {
+            ps = conn.prepareStatement(
+                    "select * from user_card where user_id like '?';");
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            user = resultSet(rs);
+        } catch (SQLException e) {
+            logger.error("read by ID error", e);
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e) {
+                logger.error("problem with closing PS or RS", e);
+            }
+        }
+        return user;
     }
     
     public void update(User object) {
-        // TODO Auto-generated method stub
-        
+        try (Connection conn = connection.getConnection()) {
+            ps = conn.prepareStatement(
+                    "update user_card set email=?, password=? where username=?;");
+            ps.setString(1, object.getEmail());
+            ps.setString(2, object.getPassword());
+            ps.setString(3, object.getUsername());
+            ps.execute();
+        } catch (SQLException e) {
+            logger.error("update user error", e);
+        } finally {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                logger.error("problem with closing PS", e);
+            }
+        }
     }
     
     public void delete(User object) {
         try (Connection conn = connection.getConnection()) {
             logger.debug("delete user");
-            ps = conn.prepareStatement("delete * from user_card where username=?");
+            ps = conn.prepareStatement(
+                    "delete * from user_card where username=?");
             ps.setString(1, object.getUsername());
             ps.execute();
-            ps.close();
         } catch (SQLException e) {
             logger.error("delete user error", e);
+        } finally {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                logger.error("problem with closing PS", e);
+            }
         }
         
     }
     
     public List<User> getAll() {
-        // TODO Auto-generated method stub
-        return null;
+        List<User> list = new ArrayList<User>();
+        try (Connection conn = connection.getConnection()) {
+            ps = conn.prepareStatement("select * from user_card;");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new User(rs.getString("user_id"),
+                        rs.getString("username"), rs.getString("email"),
+                        rs.getString("password"), rs.getString("role"),
+                        rs.getBoolean("ban")));
+            }
+        } catch (SQLException e) {
+            logger.error("get all error", e);
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e) {
+                logger.error("problem with closing PS or RS", e);
+            }
+        }
+        return list;
     }
     
     public User findByUsername(String username) {
-        // TODO Auto-generated method stub
-        return null;
+        User user = null;
+        try (Connection conn = connection.getConnection()) {
+            ps = conn.prepareStatement(
+                    "select * from user_card where username like '?';");
+            ps.setString(1, username);
+            rs = ps.executeQuery();
+            user = resultSet(rs);
+        } catch (SQLException e) {
+            logger.error("find by username error", e);
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e) {
+                logger.error("problem with closing PS or RS", e);
+            }
+        }
+        return user;
     }
     
+    private User resultSet(ResultSet rs) {
+        User user = null;
+        try {
+            while (rs.next()) {
+                user = new User();
+                user.setUid(rs.getString("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getString("role"));
+                user.setBan(rs.getBoolean("ban"));
+            }
+        } catch (SQLException e) {
+            logger.error("ResultSet error", e);
+        }
+        return user;
+    }
 }

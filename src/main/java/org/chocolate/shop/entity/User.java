@@ -6,7 +6,7 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private Role role;
+    private String role;
     private boolean ban;
     
     public User() {
@@ -14,7 +14,7 @@ public class User {
     }
     
     public User(String uid, String username, String email, String password,
-            Role role,
+            String role,
             boolean ban) {
         super();
         this.uid = uid;
@@ -58,23 +58,11 @@ public class User {
     }
     
     public String getRole() {
-        if (role == Role.ADMIN) {
-            return "ADMIN";
-        } else if (role == Role.USER) {
-            return "USER";
-        } else {
-            throw new IllegalArgumentException();
-        }
+        return role;
     }
     
-    public void setRole(Role role) {
-        if (role.equals("ADMIN")) {
-            this.role = Role.ADMIN;
-        } else if (role.equals("USER")) {
-            this.role = Role.USER;
-        } else {
-            throw new IllegalArgumentException();
-        }
+    public void setRole(String role) {
+        this.role = role;
     }
     
     public boolean isBan() {
