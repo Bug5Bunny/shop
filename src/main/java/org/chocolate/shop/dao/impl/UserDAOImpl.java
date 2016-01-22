@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.chocolate.shop.connectionmanager.ConnectionManager;
 import org.chocolate.shop.dao.UserDAO;
 import org.chocolate.shop.entity.User;
@@ -42,7 +43,7 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(1, uuid);
             ps.setString(2, object.getUsername());
             ps.setString(3, object.getEmail());
-            ps.setString(4, object.getPassword());
+            ps.setString(4, DigestUtils.md5Hex(object.getPassword()));
             ps.execute();
         } catch (SQLException e) {
             logger.error("create user error", e);
@@ -82,7 +83,7 @@ public class UserDAOImpl implements UserDAO {
             ps = conn.prepareStatement(
                     "update user_card set email=?, password=? where username=?;");
             ps.setString(1, object.getEmail());
-            ps.setString(2, object.getPassword());
+            ps.setString(2, DigestUtils.md5Hex(object.getPassword()));
             ps.setString(3, object.getUsername());
             ps.execute();
         } catch (SQLException e) {
