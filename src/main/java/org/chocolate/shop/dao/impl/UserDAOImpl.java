@@ -144,7 +144,7 @@ public class UserDAOImpl implements UserDAO {
         User user = null;
         try (Connection conn = connection.getConnection()) {
             ps = conn.prepareStatement(
-                    "select * from user_card where username like '?';");
+                    "select * from user_card where username like ?;");
             ps.setString(1, username);
             rs = ps.executeQuery();
             user = resultSet(rs);
@@ -171,7 +171,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
                 user.setRole(rs.getString("role"));
-                user.setBan(rs.getBoolean("ban"));
+                user.setBan(rs.getBoolean("notlocked"));
             }
         } catch (SQLException e) {
             logger.error("ResultSet error", e);
