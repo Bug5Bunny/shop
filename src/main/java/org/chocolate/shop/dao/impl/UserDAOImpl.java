@@ -130,7 +130,6 @@ public class UserDAOImpl implements UserDAO {
 				logger.error("problem with closing PS", e);
 			}
 		}
-
 	}
 
 	@Override

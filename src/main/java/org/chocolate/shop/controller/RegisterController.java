@@ -8,6 +8,8 @@ import org.chocolate.shop.connectionmanager.DataBase;
 import org.chocolate.shop.dao.impl.UserDAOImpl;
 import org.chocolate.shop.entity.RegisterForm;
 import org.chocolate.shop.entity.User;
+import org.chocolate.shop.validator.RegisterValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,6 +28,9 @@ public class RegisterController {
 	private ConnectionManager connection = ConnectionManager.getInstance(DataBase.LOCALDB);
 	private UserDAOImpl userDAO = UserDAOImpl.getInstance(connection);
 
+	@Autowired
+	private RegisterValidator registerValidator;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String register(final ModelMap model) {
 		final RegisterForm registerForm = new RegisterForm();
@@ -36,6 +41,7 @@ public class RegisterController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView processRegister(final RegisterForm registerForm, final BindingResult result) {
 		final ModelAndView model = new ModelAndView();
+		registerValidator.validate(registerForm, result);
 		if (result.hasErrors()) {
 			model.setViewName("register");
 			return model;
