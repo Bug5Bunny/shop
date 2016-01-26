@@ -4,6 +4,6 @@ import org.chocolate.shop.entity.Product;
 
 public interface ProductDAO extends BaseDAO<Product> {
 
-    Product findByName(String name);
-    
+	Product findByName(String name);
+
 }
