@@ -10,7 +10,11 @@ public class Product {
 	private BigDecimal price;
 	private String photo;
 
-	public Product(String uid, String name, String description, BigDecimal money, String photo) {
+	public Product() {
+		super();
+	}
+
+	public Product(final String uid, final String name, final String description, final BigDecimal money, final String photo) {
 		super();
 		this.uid = uid;
 		this.name = name;
@@ -23,7 +27,7 @@ public class Product {
 		return uid;
 	}
 
-	public void setUid(String uid) {
+	public void setUid(final String uid) {
 		this.uid = uid;
 	}
 
@@ -31,7 +35,7 @@ public class Product {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -39,7 +43,7 @@ public class Product {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -47,7 +51,7 @@ public class Product {
 		return price;
 	}
 
-	public void setPrice(BigDecimal price) {
+	public void setPrice(final BigDecimal price) {
 		this.price = price;
 	}
 
@@ -55,7 +59,7 @@ public class Product {
 		return photo;
 	}
 
-	public void setPhoto(String photo) {
+	public void setPhoto(final String photo) {
 		this.photo = photo;
 	}
 
