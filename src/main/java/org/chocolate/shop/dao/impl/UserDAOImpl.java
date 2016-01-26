@@ -97,11 +97,28 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 
+	public void lock(final String username, final String notLocked) {
+		try (Connection conn = connection.getConnection()) {
+			ps = conn.prepareStatement("update user_card set notlocked=? where username=?;");
+			ps.setBoolean(1, Boolean.parseBoolean(notLocked));
+			ps.setString(2, username);
+			ps.execute();
+		} catch (final SQLException e) {
+			logger.error("lock user error", e);
+		} finally {
+			try {
+				ps.close();
+			} catch (final SQLException e) {
+				logger.error("problem with closing PS", e);
+			}
+		}
+	}
+
 	@Override
 	public void delete(final User object) {
 		try (Connection conn = connection.getConnection()) {
 			logger.debug("delete user");
-			ps = conn.prepareStatement("delete * from user_card where username=?");
+			ps = conn.prepareStatement("delete from user_card where username=?");
 			ps.setString(1, object.getUsername());
 			ps.execute();
 		} catch (final SQLException e) {
@@ -128,6 +145,50 @@ public class UserDAOImpl implements UserDAO {
 			}
 		} catch (final SQLException e) {
 			logger.error("get all error", e);
+		} finally {
+			try {
+				ps.close();
+				rs.close();
+			} catch (final SQLException e) {
+				logger.error("problem with closing PS or RS", e);
+			}
+		}
+		return list;
+	}
+
+	public List<User> getAllNotLocked() {
+		final List<User> list = new ArrayList<>();
+		try (Connection conn = connection.getConnection()) {
+			ps = conn.prepareStatement("select * from user_card where notlocked=true;");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				list.add(new User(rs.getString("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"),
+						rs.getString("role"), rs.getBoolean("notlocked")));
+			}
+		} catch (final SQLException e) {
+			logger.error("get all not locked error", e);
+		} finally {
+			try {
+				ps.close();
+				rs.close();
+			} catch (final SQLException e) {
+				logger.error("problem with closing PS or RS", e);
+			}
+		}
+		return list;
+	}
+
+	public List<User> getAllLocked() {
+		final List<User> list = new ArrayList<>();
+		try (Connection conn = connection.getConnection()) {
+			ps = conn.prepareStatement("select * from user_card where notlocked=false;");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				list.add(new User(rs.getString("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"),
+						rs.getString("role"), rs.getBoolean("notlocked")));
+			}
+		} catch (final SQLException e) {
+			logger.error("get all locked error", e);
 		} finally {
 			try {
 				ps.close();
