@@ -8,7 +8,11 @@ public class Order {
 	private String userId;
 	private Timestamp orderTime;
 
-	public Order(String uid, String userId, Timestamp orderTime) {
+	public Order() {
+		super();
+	}
+
+	public Order(final String uid, final String userId, final Timestamp orderTime) {
 		super();
 		this.uid = uid;
 		this.userId = userId;
@@ -19,7 +23,7 @@ public class Order {
 		return uid;
 	}
 
-	public void setUid(String uid) {
+	public void setUid(final String uid) {
 		this.uid = uid;
 	}
 
@@ -27,7 +31,7 @@ public class Order {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(final String userId) {
 		this.userId = userId;
 	}
 
@@ -35,7 +39,7 @@ public class Order {
 		return orderTime;
 	}
 
-	public void setOrderTime(Timestamp orderTime) {
+	public void setOrderTime(final Timestamp orderTime) {
 		this.orderTime = orderTime;
 	}
 

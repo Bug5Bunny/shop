@@ -38,7 +38,7 @@ public class ProductDAOImpl implements ProductDAO {
 		final String uuid = UUID.randomUUID().toString();
 		try (Connection conn = connection.getConnection()) {
 			logger.debug("create product");
-			ps = conn.prepareStatement("insert into product(uid,name,description,price,photo) values(?,?,?,?,?);");
+			ps = conn.prepareStatement("insert into product(product_id,name,description,price,photo) values(?,?,?,?,?);");
 			ps.setString(1, uuid);
 			ps.setString(2, object.getName());
 			ps.setString(3, object.getDescription());
@@ -61,7 +61,7 @@ public class ProductDAOImpl implements ProductDAO {
 	public Product readByID(final String uid) {
 		Product product = null;
 		try (Connection conn = connection.getConnection()) {
-			ps = conn.prepareStatement("select * from product where uid like '?';");
+			ps = conn.prepareStatement("select * from product where product_id like '?';");
 			ps.setString(1, uid);
 			rs = ps.executeQuery();
 			product = resultSet(rs);
@@ -118,12 +118,12 @@ public class ProductDAOImpl implements ProductDAO {
 
 	@Override
 	public List<Product> getAll() {
-		final List<Product> list = new ArrayList<Product>();
+		List<Product> list = new ArrayList<Product>();
 		try (Connection conn = connection.getConnection()) {
 			ps = conn.prepareStatement("select * from product;");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				list.add(new Product(rs.getString("uid"), rs.getString("name"), rs.getString("description"), rs.getBigDecimal("price"),
+				list.add(new Product(rs.getString("product_id"), rs.getString("name"), rs.getString("description"), rs.getBigDecimal("price"),
 						rs.getString("photo")));
 			}
 		} catch (final SQLException e) {
@@ -165,7 +165,7 @@ public class ProductDAOImpl implements ProductDAO {
 		try {
 			while (rs.next()) {
 				product = new Product();
-				product.setUid(rs.getString("uid"));
+				product.setUid(rs.getString("product_id"));
 				product.setName(rs.getString("name"));
 				product.setDescription(rs.getString("description"));
 				product.setPrice(rs.getBigDecimal("price"));
