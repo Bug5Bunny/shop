@@ -14,6 +14,7 @@ import org.chocolate.shop.connectionmanager.ConnectionManager;
 import org.chocolate.shop.dao.UserDAO;
 import org.chocolate.shop.entity.User;
 import org.chocolate.shop.log.Log;
+import org.chocolate.shop.util.Constant.UserCard;
 
 public class UserDAOImpl implements UserDAO {
 
@@ -139,8 +140,8 @@ public class UserDAOImpl implements UserDAO {
 			ps = conn.prepareStatement("select * from user_card;");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				list.add(new User(rs.getString("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"),
-						rs.getString("role"), rs.getBoolean("notlocked")));
+				list.add(new User(rs.getString(UserCard.USERID), rs.getString(UserCard.USERNAME), rs.getString(UserCard.EMAIL),
+						rs.getString(UserCard.EMAIL), rs.getString(UserCard.ROLE), rs.getBoolean(UserCard.NOTLOCKED)));
 			}
 		} catch (final SQLException e) {
 			logger.error("get all error", e);
@@ -161,8 +162,8 @@ public class UserDAOImpl implements UserDAO {
 			ps = conn.prepareStatement("select * from user_card where notlocked=true;");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				list.add(new User(rs.getString("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"),
-						rs.getString("role"), rs.getBoolean("notlocked")));
+				list.add(new User(rs.getString(UserCard.USERID), rs.getString(UserCard.USERNAME), rs.getString(UserCard.EMAIL),
+						rs.getString(UserCard.PASSWORD), rs.getString(UserCard.ROLE), rs.getBoolean(UserCard.NOTLOCKED)));
 			}
 		} catch (final SQLException e) {
 			logger.error("get all not locked error", e);
@@ -183,8 +184,8 @@ public class UserDAOImpl implements UserDAO {
 			ps = conn.prepareStatement("select * from user_card where notlocked=false;");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				list.add(new User(rs.getString("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"),
-						rs.getString("role"), rs.getBoolean("notlocked")));
+				list.add(new User(rs.getString(UserCard.USERID), rs.getString(UserCard.USERNAME), rs.getString(UserCard.EMAIL),
+						rs.getString(UserCard.PASSWORD), rs.getString(UserCard.ROLE), rs.getBoolean(UserCard.NOTLOCKED)));
 			}
 		} catch (final SQLException e) {
 			logger.error("get all locked error", e);
@@ -225,12 +226,12 @@ public class UserDAOImpl implements UserDAO {
 		try {
 			while (rs.next()) {
 				user = new User();
-				user.setUid(rs.getString("user_id"));
-				user.setUsername(rs.getString("username"));
-				user.setEmail(rs.getString("email"));
-				user.setPassword(rs.getString("password"));
-				user.setRole(rs.getString("role"));
-				user.setBan(rs.getBoolean("notlocked"));
+				user.setUid(rs.getString(UserCard.USERID));
+				user.setUsername(rs.getString(UserCard.USERNAME));
+				user.setEmail(rs.getString(UserCard.EMAIL));
+				user.setPassword(rs.getString(UserCard.PASSWORD));
+				user.setRole(rs.getString(UserCard.ROLE));
+				user.setBan(rs.getBoolean(UserCard.NOTLOCKED));
 			}
 		} catch (final SQLException e) {
 			logger.error("ResultSet error", e);

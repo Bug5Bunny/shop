@@ -13,6 +13,7 @@ import org.chocolate.shop.connectionmanager.ConnectionManager;
 import org.chocolate.shop.dao.OrderDAO;
 import org.chocolate.shop.entity.Order;
 import org.chocolate.shop.log.Log;
+import org.chocolate.shop.util.Constant.OrderList;
 
 public class OrderDAOImpl implements OrderDAO {
 
@@ -119,7 +120,7 @@ public class OrderDAOImpl implements OrderDAO {
 			ps = conn.prepareStatement("select * from order_list;");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				list.add(new Order(rs.getString("order_id"), rs.getString("user_id"), rs.getTimestamp("order_time")));
+				list.add(new Order(rs.getString(OrderList.ORDERID), rs.getString(OrderList.USERID), rs.getTimestamp(OrderList.ORDERTIME)));
 			}
 		} catch (final SQLException e) {
 			logger.error("get all order_list error", e);
@@ -139,9 +140,9 @@ public class OrderDAOImpl implements OrderDAO {
 		try {
 			while (rs.next()) {
 				order = new Order();
-				order.setUid(rs.getString("order_id"));
-				order.setUserId(rs.getString("user_id"));
-				order.setOrderTime(rs.getTimestamp("order_time"));
+				order.setUid(rs.getString(OrderList.ORDERID));
+				order.setUserId(rs.getString(OrderList.USERID));
+				order.setOrderTime(rs.getTimestamp(OrderList.ORDERTIME));
 			}
 		} catch (final SQLException e) {
 			logger.error("ResultSet error", e);

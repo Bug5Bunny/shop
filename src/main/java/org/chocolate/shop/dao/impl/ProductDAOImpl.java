@@ -13,6 +13,7 @@ import org.chocolate.shop.connectionmanager.ConnectionManager;
 import org.chocolate.shop.dao.ProductDAO;
 import org.chocolate.shop.entity.Product;
 import org.chocolate.shop.log.Log;
+import org.chocolate.shop.util.Constant.ProductList;
 
 public class ProductDAOImpl implements ProductDAO {
 
@@ -61,7 +62,7 @@ public class ProductDAOImpl implements ProductDAO {
 	public Product readByID(final String uid) {
 		Product product = null;
 		try (Connection conn = connection.getConnection()) {
-			ps = conn.prepareStatement("select * from product where product_id like '?';");
+			ps = conn.prepareStatement("select * from product where product_id like ?;");
 			ps.setString(1, uid);
 			rs = ps.executeQuery();
 			product = resultSet(rs);
@@ -81,11 +82,12 @@ public class ProductDAOImpl implements ProductDAO {
 	@Override
 	public void update(final Product object) {
 		try (Connection conn = connection.getConnection()) {
-			ps = conn.prepareStatement("update product set description=?, price=?, photo=? where name=?;");
-			ps.setString(1, object.getDescription());
-			ps.setBigDecimal(2, object.getPrice());
-			ps.setString(3, object.getPhoto());
-			ps.setString(4, object.getName());
+			ps = conn.prepareStatement("update product set name=?, description=?, price=?, photo=? where product_id=?;");
+			ps.setString(1, object.getName());
+			ps.setString(2, object.getDescription());
+			ps.setBigDecimal(3, object.getPrice());
+			ps.setString(4, object.getPhoto());
+			ps.setString(5, object.getUid());
 			ps.execute();
 		} catch (final SQLException e) {
 			logger.error("update product error", e);
@@ -118,13 +120,13 @@ public class ProductDAOImpl implements ProductDAO {
 
 	@Override
 	public List<Product> getAll() {
-		List<Product> list = new ArrayList<Product>();
+		final List<Product> list = new ArrayList<Product>();
 		try (Connection conn = connection.getConnection()) {
 			ps = conn.prepareStatement("select * from product;");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				list.add(new Product(rs.getString("product_id"), rs.getString("name"), rs.getString("description"), rs.getBigDecimal("price"),
-						rs.getString("photo")));
+				list.add(new Product(rs.getString(ProductList.PRODUCTID), rs.getString(ProductList.NAME), rs.getString(ProductList.DESCRIPTION),
+						rs.getBigDecimal(ProductList.PRICE), rs.getString(ProductList.PHOTO)));
 			}
 		} catch (final SQLException e) {
 			logger.error("get all product error", e);
@@ -165,11 +167,11 @@ public class ProductDAOImpl implements ProductDAO {
 		try {
 			while (rs.next()) {
 				product = new Product();
-				product.setUid(rs.getString("product_id"));
-				product.setName(rs.getString("name"));
-				product.setDescription(rs.getString("description"));
-				product.setPrice(rs.getBigDecimal("price"));
-				product.setPhoto(rs.getString("photo"));
+				product.setUid(rs.getString(ProductList.PRODUCTID));
+				product.setName(rs.getString(ProductList.NAME));
+				product.setDescription(rs.getString(ProductList.DESCRIPTION));
+				product.setPrice(rs.getBigDecimal(ProductList.PRICE));
+				product.setPhoto(rs.getString(ProductList.PHOTO));
 			}
 		} catch (final SQLException e) {
 			logger.error("ResultSet error", e);
