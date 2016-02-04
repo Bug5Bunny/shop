@@ -1,2 +1,2 @@
 # shop
-Chocolate shop
+Simple shop
